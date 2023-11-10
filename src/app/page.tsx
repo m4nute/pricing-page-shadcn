@@ -1,113 +1,138 @@
-import Image from 'next/image'
+"use client"
 
-export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { CheckCircle2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import React, { useState } from "react"
+import { cn } from "@/lib/utils"
+
+type PricingSwitchProps = {
+  onSwitch: (value: string) => void
+}
+
+type PricingCardProps = {
+  isYearly?: boolean
+  title: string
+  monthlyPrice?: number
+  yearlyPrice?: number
+  description: string
+  features: string[]
+  actionLabel: string
+  popular?: boolean
+  exclusive?: boolean
+}
+
+const PricingHeader = ({ title, subtitle }: { title: string; subtitle: string }) => (
+  <section className="text-center">
+    <h2 className="text-3xl font-bold">{title}</h2>
+    <p className="text-xl pt-1">{subtitle}</p>
+    <br />
+  </section>
+)
+
+const PricingSwitch = ({ onSwitch }: PricingSwitchProps) => (
+  <Tabs defaultValue="0" className="w-40 mx-auto" onValueChange={onSwitch}>
+    <TabsList className="py-6 px-2">
+      <TabsTrigger value="0" className="text-base">
+        Monthly
+      </TabsTrigger>
+      <TabsTrigger value="1" className="text-base">
+        Yearly
+      </TabsTrigger>
+    </TabsList>
+  </Tabs>
+)
+
+const PricingCard = ({ isYearly, title, monthlyPrice, yearlyPrice, description, features, actionLabel, popular, exclusive }: PricingCardProps) => (
+  <Card
+    className={cn(`w-72 flex flex-col justify-between py-1 ${popular ? "border-rose-400" : "border-zinc-700"} mx-auto sm:mx-0`, {
+      "animate-background-shine bg-white dark:bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] transition-colors":
+        exclusive,
+    })}>
+    <div>
+      <CardHeader className="pb-8 pt-4">
+        {isYearly && yearlyPrice && monthlyPrice ? (
+          <div className="flex justify-between">
+            <CardTitle className="text-zinc-700 dark:text-zinc-300 text-lg">{title}</CardTitle>
+            <div
+              className={cn("px-2.5 rounded-xl h-fit text-sm py-1 bg-zinc-200 text-black dark:bg-zinc-800 dark:text-white", {
+                "bg-gradient-to-r from-orange-400 to-rose-400 dark:text-black ": popular,
+              })}>
+              Save ${monthlyPrice * 12 - yearlyPrice}
+            </div>
+          </div>
+        ) : (
+          <CardTitle className="text-zinc-700 dark:text-zinc-300 text-lg">{title}</CardTitle>
+        )}
+        <div className="flex gap-0.5">
+          <h3 className="text-3xl font-bold">{yearlyPrice && isYearly ? "$" + yearlyPrice : monthlyPrice ? "$" + monthlyPrice : "Custom"}</h3>
+          <span className="flex flex-col justify-end text-sm mb-1">{yearlyPrice && isYearly ? "/year" : monthlyPrice ? "/month" : null}</span>
         </div>
-      </div>
+        <CardDescription className="pt-1.5 h-12">{description}</CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-2">
+        {features.map((feature: string) => (
+          <CheckItem key={feature} text={feature} />
+        ))}
+      </CardContent>
+    </div>
+    <CardFooter className="mt-2">
+      <Button className="relative inline-flex w-full items-center justify-center rounded-md bg-black text-white dark:bg-white px-6 font-medium  dark:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
+        <div className="absolute -inset-0.5 -z-10 rounded-lg bg-gradient-to-b from-[#c7d2fe] to-[#8678f9] opacity-75 blur" />
+        {actionLabel}
+      </Button>
+    </CardFooter>
+  </Card>
+)
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+const CheckItem = ({ text }: { text: string }) => (
+  <div className="flex gap-2">
+    <CheckCircle2 size={18} className="my-auto text-green-400" />
+    <p className="pt-0.5 text-zinc-700 dark:text-zinc-300 text-sm">{text}</p>
+  </div>
+)
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+export default function page() {
+  const [isYearly, setIsYearly] = useState(false)
+  const togglePricingPeriod = (value: string) => setIsYearly(parseInt(value) === 1)
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+  const plans = [
+    {
+      title: "Basic",
+      monthlyPrice: 10,
+      yearlyPrice: 100,
+      description: "Essential features you need to get started",
+      features: ["Example Feature Number 1", "Example Feature Number 2", "Example Feature Number 3"],
+      actionLabel: "Get Started",
+    },
+    {
+      title: "Pro",
+      monthlyPrice: 25,
+      yearlyPrice: 250,
+      description: "Perfect for owners of small & medium businessess",
+      features: ["Example Feature Number 1", "Example Feature Number 2", "Example Feature Number 3"],
+      actionLabel: "Get Started",
+      popular: true,
+    },
+    {
+      title: "Enterprise",
+      price: "Custom",
+      description: "Dedicated support and infrastructure to fit your needs",
+      features: ["Example Feature Number 1", "Example Feature Number 2", "Example Feature Number 3", "Super Exclusive Feature"],
+      actionLabel: "Contact Sales",
+      exclusive: true,
+    },
+  ]
+  return (
+    <div className="py-8">
+      <PricingHeader title="Pricing Plans" subtitle="Choose the plan that's right for you" />
+      <PricingSwitch onSwitch={togglePricingPeriod} />
+      <section className="flex flex-col sm:flex-row sm:flex-wrap justify-center gap-8 mt-8">
+        {plans.map((plan) => {
+          return <PricingCard key={plan.title} {...plan} isYearly={isYearly} />
+        })}
+      </section>
+    </div>
   )
 }
